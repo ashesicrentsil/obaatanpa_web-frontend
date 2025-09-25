@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Favicon Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .highlight { background: #f0f8ff; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Quick Favicon Fix for Obaatanpa</h1>
+    
+    <div class="step highlight">
+        <h2>Option 1: Direct Copy (Simplest)</h2>
+        <p>Copy your logo file and rename it:</p>
+        <ol>
+            <li>Go to <code>public/images/icons/</code></li>
+            <li>Copy <code>maternity-logo.png</code></li>
+            <li>Paste it in the <code>public/</code> folder</li>
+            <li>Rename the copy to <code>favicon.ico</code></li>
+            <li>Restart your server and clear browser cache (Ctrl+F5)</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Option 2: Use Online Converter</h2>
+        <ol>
+            <li>Go to <a href="https://convertio.co/png-ico/" target="_blank">https://convertio.co/png-ico/</a></li>
+            <li>Upload your <code>maternity-logo.png</code> file</li>
+            <li>Convert to ICO format</li>
+            <li>Download and save as <code>favicon.ico</code> in the <code>public/</code> folder</li>
+            <li>Restart your server</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>Option 3: Canvas Generator (Below)</h2>
+        <p>Use the canvas below to create a favicon from your logo:</p>
+        
+        <div style="margin: 20px 0;">
+            <img id="logoImg" src="/images/icons/maternity-logo.png" alt="Logo" style="max-width: 100px; border: 1px solid #ccc;" crossorigin="anonymous">
+        </div>
+        
+        <canvas id="faviconCanvas" width="32" height="32" style="border: 1px solid #ccc; margin: 10px;"></canvas>
+        <br>
+        <button onclick="generateFavicon()" style="padding: 10px 20px; background: #F59297; color: white; border: none; border-radius: 5px; cursor: pointer;">Generate Favicon</button>
+        <button onclick="downloadFavicon()" style="padding: 10px 20px; background: #7da8e6; color: white; border: none; border-radius: 5px; cursor: pointer;">Download as favicon.ico</button>
+    </div>
+
+    <div class="step">
+        <h2>🔍 Troubleshooting</h2>
+        <ul>
+            <li><strong>Clear browser cache:</strong> Press Ctrl+F5 (Windows) or Cmd+Shift+R (Mac)</li>
+            <li><strong>Hard refresh:</strong> Close and reopen the browser tab</li>
+            <li><strong>Check file location:</strong> Make sure favicon.ico is directly in the <code>public/</code> folder</li>
+            <li><strong>Restart server:</strong> Stop and start your development server</li>
+            <li><strong>Try incognito mode:</strong> Test in a private/incognito browser window</li>
+        </ul>
+    </div>
+
+    <script>
+        function generateFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            const ctx = canvas.getContext('2d');
+            const img = document.getElementById('logoImg');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, 32, 32);
+            
+            // Draw the logo
+            if (img.complete && img.naturalHeight !== 0) {
+                ctx.drawImage(img, 0, 0, 32, 32);
+                console.log('Favicon generated successfully!');
+            } else {
+                console.log('Logo image not loaded yet');
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0, 32, 32);
+                    console.log('Favicon generated successfully!');
+                };
+            }
+        }
+        
+        function downloadFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            const link = document.createElement('a');
+            link.download = 'favicon.ico';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            alert('Favicon downloaded! Save it as favicon.ico in your public folder.');
+        }
+        
+        // Auto-generate when page loads
+        window.onload = function() {
+            setTimeout(generateFavicon, 500);
+        };
+    </script>
+</body>
+</html>

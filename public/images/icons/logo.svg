@@ -1,0 +1,9 @@
+<svg width="120" height="40" viewBox="0 0 120 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- Temporary placeholder logo - replace with your actual Obaatanpa logo -->
+  <rect width="120" height="40" rx="8" fill="#e67d82"/>
+  <text x="60" y="25" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="14" font-weight="bold">
+    OBAATANPA
+  </text>
+  <circle cx="15" cy="20" r="6" fill="white" opacity="0.8"/>
+  <circle cx="105" cy="20" r="4" fill="#7da8e6" opacity="0.9"/>
+</svg>
