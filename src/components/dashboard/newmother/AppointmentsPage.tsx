@@ -9,8 +9,8 @@ import axios from 'axios'
 import PregnantRescheduleModal from '../pregnant/PregnantRescheduleModal'
 
 interface PregnantAppointmentsPageProps {
-  pregnancyWeek: number
-  trimester: string
+  pregnancyWeek?: number
+  trimester?: string
   motherName?: string
 }
 

@@ -33,9 +33,9 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 
 interface PregnantResourcesPageProps {
-  pregnancyWeek: number
-  trimester: 'first' | 'second' | 'third'
-  motherName: string
+  pregnancyWeek?: number
+  trimester?: 'first' | 'second' | 'third'
+  motherName?: string
 }
 
 interface JournalEntry {
@@ -166,7 +166,7 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
       setJournalEntries(response.data.journal_entries || [])
       setJournalError(null)
     } catch (err: any) {
-      console.error('Error fetching journal entries:', err.response?.data || err)
+      // console.error('Error fetching journal entries:', err.response?.data || err)
       const errorMessage = err.response?.status === 401
         ? 'Your session has expired. Please log in again.'
         : err.response?.status === 404
