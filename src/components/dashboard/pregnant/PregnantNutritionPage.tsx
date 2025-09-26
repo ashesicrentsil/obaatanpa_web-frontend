@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -438,28 +439,103 @@ const PregnantNutritionPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
   const getTopFoods = () => {
     const foods = {
       first: [
-        { name: 'Ginger', benefit: 'Reduces nausea', videoId: 'dQw4w9WgXcQ', title: 'Benefits of Ginger During Pregnancy' },
-        { name: 'Bananas', benefit: 'Easy to digest + B6', videoId: 'dQw4w9WgXcQ', title: 'Why Bananas Are Perfect for First Trimester' },
-        { name: 'Crackers', benefit: 'Settles stomach', videoId: 'dQw4w9WgXcQ', title: 'How Crackers Help with Morning Sickness' },
-        { name: 'Watermelon', benefit: 'Hydration + vitamins', videoId: 'dQw4w9WgXcQ', title: 'Watermelon for Pregnancy Hydration' },
-        { name: 'Leafy greens', benefit: 'Folate + iron', videoId: 'dQw4w9WgXcQ', title: 'Essential Leafy Greens for Pregnancy' }
+        { 
+          name: 'Ginger Soup', 
+          benefit: 'Reduces nausea, rich in antioxidants', 
+          videoId: 'pE3pmJSkHRs', 
+          title: 'Ginger Soup Recipe for Morning Sickness' 
+        },
+        { 
+          name: 'Banana Smoothie', 
+          benefit: 'Easy to digest, high in B6', 
+          videoId: 'kXnnXCDFrng', 
+          title: 'Banana Smoothie for First Trimester Energy' 
+        },
+        { 
+          name: 'Cracker Snack', 
+          benefit: 'Settles stomach, light and nutritious', 
+          videoId: 'MPYSfi9YgYk', 
+          title: 'Healthy Cracker Snack for Pregnancy' 
+        },
+        { 
+          name: 'Watermelon Salad', 
+          benefit: 'Hydration, vitamin-rich', 
+          videoId: 'RF7xafO-DwU', 
+          title: 'Watermelon Salad for Pregnancy Hydration' 
+        },
+        { 
+          name: 'Leafy Green Stew', 
+          benefit: 'High in folate and iron', 
+          videoId: '-Hn6w8pu8zc', 
+          title: 'Nutritious Leafy Green Stew for Pregnancy' 
+        },
       ],
       second: [
-        { name: 'Avocados', benefit: 'Good fats + folate', videoId: 'dQw4w9WgXcQ', title: 'Avocado Benefits for Second Trimester' },
-        { name: 'Kontomire', benefit: 'Iron + fiber', videoId: 'dQw4w9WgXcQ', title: 'Traditional Ghanaian Kontomire for Pregnancy' },
-        { name: 'Boiled eggs', benefit: 'Protein + choline', videoId: 'dQw4w9WgXcQ', title: 'Eggs for Brain Development During Pregnancy' },
-        { name: 'Oranges', benefit: 'Vitamin C + hydration', videoId: 'dQw4w9WgXcQ', title: 'Citrus Fruits for Pregnancy Nutrition' },
-        { name: 'Beans', benefit: 'Protein + fiber + iron', videoId: 'dQw4w9WgXcQ', title: 'Plant-Based Protein for Pregnant Mothers' }
+        { 
+          name: 'Avocado Toast', 
+          benefit: 'Good fats, folate-rich', 
+          videoId: 'pE3pmJSkHRs', 
+          title: 'Avocado Toast Recipe for Second Trimester' 
+        },
+        { 
+          name: 'Kontomire Stew', 
+          benefit: 'Iron, fiber for digestion', 
+          videoId: 'kXnnXCDFrng', 
+          title: 'Ghanaian Kontomire Stew for Pregnancy' 
+        },
+        { 
+          name: 'Egg Salad', 
+          benefit: 'Protein, choline for brain health', 
+          videoId: 'MPYSfi9YgYk', 
+          title: 'Egg Salad Recipe for Pregnancy Nutrition' 
+        },
+        { 
+          name: 'Citrus Fruit Bowl', 
+          benefit: 'Vitamin C, hydrating', 
+          videoId: 'RF7xafO-DwU', 
+          title: 'Citrus Fruit Bowl for Second Trimester' 
+        },
+        { 
+          name: 'Bean Soup', 
+          benefit: 'Protein, fiber, Stu, iron-rich', 
+          videoId: '-Hn6w8pu8zc', 
+          title: 'Bean Soup for Pregnancy Energy' 
+        },
       ],
       third: [
-        { name: 'Salmon/Tilapia', benefit: 'DHA for brain development', videoId: 'dQw4w9WgXcQ', title: 'Fish for Baby Brain Development' },
-        { name: 'Dates', benefit: 'Natural energy + fiber', videoId: 'dQw4w9WgXcQ', title: 'Dates for Natural Labor Preparation' },
-        { name: 'Spinach', benefit: 'Iron + folate', videoId: 'dQw4w9WgXcQ', title: 'Iron-Rich Foods for Third Trimester' },
-        { name: 'Milk/Yogurt', benefit: 'Calcium + protein', videoId: 'dQw4w9WgXcQ', title: 'Dairy Products for Strong Bones' },
-        { name: 'Sweet potatoes', benefit: 'Beta-carotene + fiber', videoId: 'dQw4w9WgXcQ', title: 'Sweet Potatoes for Pregnancy Nutrition' }
-      ]
-    }
-    return foods[trimester]
+        { 
+          name: 'Grilled Tilapia', 
+          benefit: 'DHA for brain development', 
+          videoId: 'pE3pmJSkHRs', 
+          title: 'Grilled Tilapia Recipe for Third Trimester' 
+        },
+        { 
+          name: 'Date Energy Bites', 
+          benefit: 'Natural energy, fiber-rich', 
+          videoId: 'kXnnXCDFrng', 
+          title: 'Date Energy Bites for Labor Preparation' 
+        },
+        { 
+          name: 'Spinach Soup', 
+          benefit: 'Iron, folate for late pregnancy', 
+          videoId: 'MPYSfi9YgYk', 
+          title: 'Spinach Soup Recipe for Third Trimester' 
+        },
+        { 
+          name: 'Yogurt Parfait', 
+          benefit: 'Calcium, protein for bone health', 
+          videoId: 'RF7xafO-DwU', 
+          title: 'Yogurt Parfait for Pregnancy Nutrition' 
+        },
+        { 
+          name: 'Sweet Potato Mash', 
+          benefit: 'Beta-carotene, fiber-rich', 
+          videoId: '-Hn6w8pu8zc', 
+          title: 'Sweet Potato Mash for Third Trimester' 
+        },
+      ],
+    };
+    return foods[trimester];
   }
 
   // Foods to avoid
@@ -904,7 +980,7 @@ const PregnantNutritionPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
         <section className="mb-16">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Top Foods This Week
+              Foods To Explore
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
               Nutrient-rich foods perfect for your current trimester
@@ -980,9 +1056,6 @@ const PregnantNutritionPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
               ))}
             </div>
             <div className="text-center">
-              <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-2xl font-semibold transition-colors duration-200">
-                View Full Avoid List
-              </button>
             </div>
           </div>
         </section>
@@ -1029,141 +1102,6 @@ const PregnantNutritionPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                 </div>
                 <p className="text-white/80">Tap to track your water intake</p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mb-16">
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/10 dark:to-pink-900/10 rounded-3xl p-8 border border-purple-200 dark:border-purple-800">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Personalize Your Nutrition Plan
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Help us tailor your nutrition plan — do you have allergies or dietary restrictions?
-              </p>
-            </div>
-            {!showPreferences ? (
-              <div className="text-center">
-                <button
-                  onClick={() => setShowPreferences(true)}
-                  className="bg-gradient-to-r from-[#F59297] to-[#7da8e6] text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200"
-                >
-                  Set My Preferences
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {[
-                  'Vegetarian', 'Lactose Intolerant', 'Diabetic-Friendly', 'Nut Allergies',
-                  'Seafood Allergies', 'Gluten-Free', 'Low Sodium', 'Organic Only'
-                ].map((preference, index) => (
-                  <label
-                    key={index}
-                    className="flex items-center space-x-3 p-4 bg-white dark:bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <input
-                      type="checkbox"
-                      className="w-5 h-5 text-[#F59297] rounded focus:ring-[#F59297] focus:ring-2"
-                    />
-                    <span className="text-gray-900 dark:text-white font-medium">{preference}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        <section className="mb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-lg">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Today's Meals</h3>
-                <button className="text-[#F59297] hover:text-[#e67d82] font-semibold text-sm">
-                  Add Meal
-                </button>
-              </div>
-              <div className="space-y-4">
-                {[
-                  { meal: 'Breakfast', food: 'Oats with banana', time: '8:00 AM', status: 'logged' },
-                  { meal: 'Snack', food: 'Apple with peanut butter', time: '10:30 AM', status: 'logged' },
-                  { meal: 'Lunch', food: 'Jollof rice with fish', time: '1:00 PM', status: 'logged' },
-                  { meal: 'Snack', food: 'Not logged yet', time: '4:00 PM', status: 'pending' },
-                  { meal: 'Dinner', food: 'Not logged yet', time: '7:00 PM', status: 'pending' }
-                ].map((entry, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center justify-between p-4 rounded-xl ${
-                      entry.status === 'logged'
-                        ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                        : 'bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        entry.status === 'logged' ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
-                      }`}>
-                        {entry.status === 'logged' && <CheckCircle className="w-4 h-4 text-white" />}
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">{entry.meal}</h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">{entry.food}</p>
-                      </div>
-                    </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">{entry.time}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Nutrition Goals</h3>
-              <div className="space-y-6">
-                {[
-                  { nutrient: 'Protein', current: 45, target: 60, unit: 'g', color: 'bg-blue-500' },
-                  { nutrient: 'Iron', current: 18, target: 27, unit: 'mg', color: 'bg-red-500' },
-                  { nutrient: 'Calcium', current: 800, target: 1000, unit: 'mg', color: 'bg-green-500' },
-                  { nutrient: 'Folate', current: 400, target: 600, unit: 'mcg', color: 'bg-purple-500' }
-                ].map((goal, index) => (
-                  <div key={index}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold text-gray-900 dark:text-white">{goal.nutrient}</span>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {goal.current}/{goal.target} {goal.unit}
-                      </span>
-                    </div>
-                    <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                      <div
-                        className={`${goal.color} h-3 rounded-full transition-all duration-500`}
-                        style={{ width: `${Math.min((goal.current / goal.target) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 p-4 bg-[#F59297]/10 rounded-xl">
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  💡 <strong>Tip:</strong> You're doing great! Try adding more leafy greens to reach your iron goal.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="mb-16">
-          <div className="bg-gradient-to-r from-[#F59297] to-[#7da8e6] rounded-3xl p-8 text-white text-center">
-            <h2 className="text-3xl font-bold mb-4">Want More Personalized Nutrition Tips?</h2>
-            <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Get customized meal plans, recipes, and nutrition guidance tailored specifically for your pregnancy journey.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button className="bg-white text-[#F59297] px-8 py-4 rounded-2xl font-bold hover:bg-white/90 transition-colors duration-200 flex items-center">
-                <BookOpen className="w-5 h-5 mr-2" />
-                View Nutrition Guide
-              </button>
-              <button className="bg-white/20 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/30 transition-colors duration-200 flex items-center">
-                <Share2 className="w-5 h-5 mr-2" />
-                Share Your Healthy Meals
-              </button>
             </div>
           </div>
         </section>

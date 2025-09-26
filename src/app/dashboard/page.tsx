@@ -17,7 +17,7 @@ import Footer from '@/components/Footer'
 
 const PregnantMotherDashboard = () => {
   const [user, setUser] = useState({
-    name: 'User',
+    name: 'MAMA',
     trimester: 'second' as 'first' | 'second' | 'third',
     week: 18,
     location: 'Accra, Ghana',
@@ -55,7 +55,7 @@ const PregnantMotherDashboard = () => {
         const trimester = getTrimesterFromWeek(currentWeek)
 
         setUser({
-          name: userData.fullName || 'User',
+          name: userData.fullName || 'MAMA',
           trimester,
           week: currentWeek,
           location: userData.location || 'Ghana',
@@ -68,7 +68,7 @@ const PregnantMotherDashboard = () => {
       } else {
         // First-time user - show pregnancy calculator
         setUser({
-          name: userData.fullName || 'User',
+          name: userData.fullName || 'MAMA',
           trimester: 'second', // Default until calculated
           week: 18, // Default until calculated
           location: userData.location || 'Ghana',
@@ -194,7 +194,7 @@ const PregnantMotherDashboard = () => {
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-8">
             {/* Hero Section */}
             <HeroSection
-              userName={user.name.split(' ')[0] || 'User'}
+              userName={user.name.split(' ')[0] || 'MAMA'}
               trimesterData={trimesterData}
               week={user.week}
             />
@@ -208,7 +208,7 @@ const PregnantMotherDashboard = () => {
             <ModernDashboardGrid
               trimesterData={trimesterData}
               week={user.week}
-              userName={user.name.split(' ')[0] || 'User'}
+              userName={user.name.split(' ')[0] || 'MAMA'}
             />
 
             {/* Modern Care Section - Replaces Articles, Nutrition, Emergency, Checklist, and Wellness */}
@@ -225,7 +225,7 @@ const PregnantMotherDashboard = () => {
             <PregnantAppointmentsPage
               pregnancyWeek={user.pregnancyWeek || user.week}
               trimester={user.trimester}
-              motherName={user.name.split(' ')[0] || 'Mama'}
+              motherName={user.name.split(' ')[0] || 'MAMA'}
             />
           </main>
         )

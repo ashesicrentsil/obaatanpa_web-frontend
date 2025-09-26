@@ -28,12 +28,7 @@ const DashboardNavigation = ({ activeTab, onTabChange }: DashboardNavigationProp
       icon: Baby,
       description: 'Feeding & development'
     },
-    {
-      id: 'health',
-      label: 'Health',
-      icon: Heart,
-      description: 'Vaccinations & checkups'
-    },
+
     {
       id: 'community',
       label: 'Community',

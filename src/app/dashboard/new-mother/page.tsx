@@ -89,7 +89,7 @@ export default function NewMotherDashboard() {
 
   // Extract user information
   const {
-    fullName = 'New Mother',
+    fullName = 'MAMA',
     babyAge = '3-6'
   } = userData
 
@@ -130,7 +130,7 @@ export default function NewMotherDashboard() {
           <main className="pt-32 pb-8">
             <ResourcesPage
               // babyAge={babyAge}
-              motherName={fullName.split(' ')[0] || 'Mama'}
+              motherName={fullName.split(' ')[0] || 'MAMA'}
             />
           </main>
         )

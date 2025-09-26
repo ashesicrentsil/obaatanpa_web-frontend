@@ -448,7 +448,8 @@ const SignUpModal = ({ isOpen, onClose, onOpenLogin }: SignUpModalProps) => {
       label: 'Hospital/Clinic',
       icon: '🏥',
       description: 'Medical facility',
-      heroImage: '/images/auth/hospital.jpg'
+      heroImage: '/images/auth/hospital.png'
+      
     },
     {
       id: 'practitioner' as UserType,

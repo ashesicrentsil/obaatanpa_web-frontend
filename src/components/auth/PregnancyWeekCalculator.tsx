@@ -111,11 +111,7 @@ const PregnancyWeekCalculator = ({ isOpen, onClose, onComplete }: PregnancyWeekC
         return
       }
     }
-    if (selectedMethod === 'current-week' && !formData.currentWeek) {
-      setResponseMessage('Please select your current pregnancy week.')
-      setShowResponse(true)
-      return
-    }
+
 
     const token = localStorage.getItem('authToken')
     if (!token && selectedMethod !== 'current-week') {
@@ -146,8 +142,8 @@ const PregnancyWeekCalculator = ({ isOpen, onClose, onComplete }: PregnancyWeekC
           }
           throw new Error(result.message || 'Failed to calculate pregnancy week.')
         }
-        pregnancyWeek = result.current_week
-        trimester = getTrimesterFromWeek(pregnancyWeek)
+        pregnancyWeek = result.gestational_age_weeks
+        trimester = result.trimester.toLowerCase()
       } else if (selectedMethod === 'lmp') {
         const response = await fetch('https://obaatanpa-backend.onrender.com/info/pw/menstrual_date/calculate', {
           method: 'POST',
@@ -167,17 +163,15 @@ const PregnancyWeekCalculator = ({ isOpen, onClose, onComplete }: PregnancyWeekC
           }
           throw new Error(result.message || 'Failed to calculate pregnancy week.')
         }
-        pregnancyWeek = result.current_week
-        trimester = getTrimesterFromWeek(pregnancyWeek)
+        pregnancyWeek = result.gestational_age_weeks
+        trimester = result.trimester.toLowerCase()
       } else {
         pregnancyWeek = calculatePregnancyWeekLocally('current-week', formData)
         trimester = getTrimesterFromWeek(pregnancyWeek)
         result = {
-          common_symptoms: `Week ${pregnancyWeek} of pregnancy.`,
-          current_day: 1,
-          current_week: pregnancyWeek,
-          fetal_development: `Development details for week ${pregnancyWeek}.`,
-          milestones: `Milestones for week ${pregnancyWeek}.`
+          gestational_age_weeks: pregnancyWeek,
+          trimester: trimester.charAt(0).toUpperCase() + trimester.slice(1),
+          baby_development: `Development details for week ${pregnancyWeek}.`
         }
       }
 
@@ -185,22 +179,18 @@ const PregnancyWeekCalculator = ({ isOpen, onClose, onComplete }: PregnancyWeekC
         pregnancyWeek,
         trimester,
         calculationMethod: selectedMethod,
-        commonSymptoms: result.common_symptoms,
-        currentDay: result.current_day,
-        fetalDevelopment: result.fetal_development,
-        milestones: result.milestones,
+        fetalDevelopment: result.baby_development,
         ...(selectedMethod === 'due-date' && { dueDate: formData.dueDate }),
         ...(selectedMethod === 'lmp' && { lastMenstrualPeriod: formData.lastMenstrualPeriod })
       }
 
       setPregnancyData(data)
       setResponseMessage(`
-        Week ${result.current_week}, Day ${result.current_day} (${trimester} trimester)
-        Symptoms: ${result.common_symptoms}
-        Fetal Development: ${result.fetal_development}
-        Milestones: ${result.milestones}
+        Week ${pregnancyWeek} (${trimester} trimester)
+        Fetal Development: ${result.baby_development}
       `)
       setShowResponse(true)
+      onComplete(data) // Pass data to parent component for dashboard use
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       setResponseMessage('Error calculating pregnancy week: ' + errorMessage)
@@ -212,10 +202,7 @@ const PregnancyWeekCalculator = ({ isOpen, onClose, onComplete }: PregnancyWeekC
 
   const handleResponseClose = () => {
     setShowResponse(false)
-    if (pregnancyData) {
-      onComplete(pregnancyData)
-      onClose()
-    }
+    // Do not call onClose() to keep the modal open for dashboard access
   }
 
   const methods = [
@@ -232,13 +219,6 @@ const PregnancyWeekCalculator = ({ isOpen, onClose, onComplete }: PregnancyWeekC
       title: 'Last Menstrual Period',
       description: 'I know the first day of my last period',
       color: 'from-pink-500 to-pink-600'
-    },
-    {
-      id: 'current-week',
-      icon: Target,
-      title: 'Current Pregnancy Week',
-      description: 'I know how many weeks pregnant I am',
-      color: 'from-purple-500 to-purple-600'
     }
   ]
 

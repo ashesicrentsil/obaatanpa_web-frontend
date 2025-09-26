@@ -20,7 +20,7 @@ interface PregnantMotherNavbarProps {
 const PregnantMotherNavbar = ({
   activeTab,
   onTabChange,
-  userName: propUserName = 'User',
+  userName: propUserName = 'MAMA',
   userProfilePicture,
   userLocation = 'Unknown',
   notificationCount = 0,
@@ -36,7 +36,7 @@ const PregnantMotherNavbar = ({
   // Fetch user data from localStorage
   const [userName, setUserName] = useState(propUserName)
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem('currentUser') || '{}')
+    const userData = JSON.parse(localStorage.getItem('currentUser') || '{MAMA}')
     if (userData.firstName) {
       setUserName(userData.firstName)
     }
@@ -64,8 +64,8 @@ const PregnantMotherNavbar = ({
     { id: 'nutrition', label: 'Nutrition', hasDropdown: false },
     {
       id: 'health',
-      label: 'Health',
-      hasDropdown: true,
+      // label: 'Health',
+      // hasDropdown: true,
       dropdownItems: [
         { id: 'pregnancy-health', label: 'Pregnancy Health', description: 'Prenatal care & wellness' },
         { id: 'baby-development', label: 'Baby Development', description: "Track your baby's growth" },

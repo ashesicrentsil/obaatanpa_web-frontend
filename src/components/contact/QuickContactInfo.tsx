@@ -7,9 +7,9 @@ const QuickContactInfo = () => {
     {
       icon: Mail,
       title: "Email",
-      info: "support@obaatanpa.com",
+      info: "obaatanpa.maternity@gmail.com",
       description: "Send us an email anytime",
-      action: "mailto:support@obaatanpa.com",
+      action: "mailto:obaatanpa.maternity@gmail.com",
       color: "from-[#F59297] to-pink-600",
       bgColor: "bg-pink-50 dark:bg-pink-900/20"
     },

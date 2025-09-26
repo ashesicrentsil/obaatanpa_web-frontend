@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useTheme } from '@/contexts/ThemeContext'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface NewMotherNavbarProps {
   activeTab: string
@@ -18,7 +19,7 @@ interface NewMotherNavbarProps {
 const NewMotherNavbar = ({
   activeTab,
   onTabChange,
-  userName = "User",
+  userName = "MAMA",
   userProfilePicture,
   notificationCount = 0
 }: NewMotherNavbarProps) => {
@@ -28,6 +29,7 @@ const NewMotherNavbar = ({
   const healthDropdownRef = useRef<HTMLDivElement>(null)
   const profileDropdownRef = useRef<HTMLDivElement>(null)
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -50,9 +52,9 @@ const NewMotherNavbar = ({
     { id: 'appointments', label: 'Appointments', hasDropdown: false },
     { id: 'nutrition', label: 'Nutrition', hasDropdown: false },
     {
-      id: 'health',
-      label: 'Health',
-      hasDropdown: true,
+      // id: 'health',
+      // label: 'Health',
+      // hasDropdown: true,
       dropdownItems: [
         { id: 'baby-health', label: 'Baby Health', description: 'Feeding, development & care' },
         { id: 'mother-health', label: "Mother's Health", description: 'Postpartum care & wellness' }
@@ -71,9 +73,7 @@ const NewMotherNavbar = ({
   }
 
   const handleNavClick = (itemId: string) => {
-    if (itemId === 'health') {
-      handleHealthDropdown()
-    } else {
+{
       onTabChange(itemId)
       setShowHealthDropdown(false)
       setShowProfileDropdown(false)
@@ -84,6 +84,14 @@ const NewMotherNavbar = ({
     onTabChange(subItemId)
     setShowHealthDropdown(false)
   }
+
+    const handleSignOut = () => {
+    localStorage.removeItem('currentUser')
+    setShowProfileDropdown(false)
+    setIsOpen(false)
+    router.push('/')
+  }
+
 
   return (
     <nav className={cn(
@@ -226,7 +234,7 @@ const NewMotherNavbar = ({
                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
                   <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{userName}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">New Mother</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">MAMA</p>
                   </div>
                   <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                     Profile Settings
@@ -235,7 +243,10 @@ const NewMotherNavbar = ({
                     Help & Support
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
-                    <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
+                    <button 
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
+                      
                       Sign Out
                     </button>
                   </div>
@@ -277,22 +288,7 @@ const NewMotherNavbar = ({
                       {item.hasDropdown && <ChevronDown className="w-4 h-4 ml-auto" />}
                     </button>
 
-                    {/* Mobile Health Dropdown */}
-                    {item.hasDropdown && showHealthDropdown && (
-                      <div className="ml-6 mt-2 space-y-2">
-                        {item.dropdownItems?.map((subItem) => (
-                          <button
-                            key={subItem.id}
-                            onClick={() => handleHealthSubItemClick(subItem.id)}
-                            className={`flex items-center space-x-3 w-full px-4 py-2 text-sm rounded-lg transition-colors duration-200 ${
-                              activeTab === subItem.id ? 'text-[#F59297] bg-[#F59297]/5' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-                            }`}
-                          >
-                            <span>{subItem.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+
                   </div>
                 )
               })}
@@ -315,7 +311,7 @@ const NewMotherNavbar = ({
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">{userName}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">New Mother</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">MAMA</p>
                   </div>
                 </div>
               </div>

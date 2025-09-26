@@ -183,7 +183,7 @@ const NutritionPage = ({ motherName = "Mama" }: NutritionPageProps) => {
         dinner: {
           id: dinner.name,
           name: dinner.name,
-          benefits: dinner.nutrients.join(', '),
+          benefits: dinner.nutrients,
           image: '/images/dashboard/meal-plan-dinner.jpg',
           prepTime: '40-50 mins',
           category: dinner.section,

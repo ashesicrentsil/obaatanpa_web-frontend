@@ -224,7 +224,7 @@ export default function PrivacyPolicyPage() {
                   Email: privacy@obaatanpa.com
                 </p>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Phone: +233 123 456 789
+                  Phone: +233 552 025 654
                 </p>
               </div>
               <div>

@@ -127,6 +127,12 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
   } | null>(null)
   const [chatbotError, setChatbotError] = useState<string | null>(null)
   const [chatbotLoading, setChatbotLoading] = useState(false)
+  const [showOvulationModal, setShowOvulationModal] = useState(false);
+  const [ovulationLastPeriod, setOvulationLastPeriod] = useState('');
+  const [ovulationCycleLength, setOvulationCycleLength] = useState('5');
+  const [ovulationResult, setOvulationResult] = useState<{ ovulation_date: string } | null>(null);
+  const [ovulationError, setOvulationError] = useState<string | null>(null);
+  const [ovulationLoading, setOvulationLoading] = useState(false);
   const router = useRouter()
 
   // Load token from localStorage
@@ -200,7 +206,7 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
       ])
       setJournalError(null)
     } catch (err: any) {
-      console.error('Error fetching symptom entries:', err.response?.data || err)
+      // console.error('Error fetching symptom entries:', err.response?.data || err)
       const errorMessage = err.response?.status === 401
         ? 'Your session has expired. Please log in again.'
         : err.response?.status === 404
@@ -273,6 +279,49 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
       }
     } finally {
       setChatbotLoading(false);
+    }
+  };
+
+  // Handle ovulation calculation
+  const handleOvulationCalculation = async () => {
+    if (!authToken) {
+      setOvulationError('Please log in to use the Ovulation Calculator.');
+      return;
+    }
+    if (!ovulationLastPeriod || !ovulationCycleLength) {
+      setOvulationError('Please provide both last period date and cycle length.');
+      return;
+    }
+    setOvulationLoading(true);
+    setOvulationError(null);
+    try {
+      const response = await axios.post(
+        'https://obaatanpa-backend.onrender.com/ovulation/calculator',
+        {
+          last_period_start: ovulationLastPeriod,
+          cycle_length: parseInt(ovulationCycleLength),
+        },
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+      setOvulationResult(response.data);
+      setOvulationError(null);
+    } catch (err: any) {
+      console.error('Error calculating ovulation date:', err.response?.data || err);
+      const errorMessage =
+        err.response?.status === 401
+          ? 'Your session has expired. Please log in again.'
+          : err.response?.status === 400
+          ? 'Please provide valid input for last period date and cycle length.'
+          : `Failed to calculate ovulation date: ${err.response?.data?.error || 'Please try again later.'}`;
+      setOvulationError(errorMessage);
+      if (err.response?.status === 401) {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('authToken');
+        setAuthToken(null);
+        router.push('/login');
+      }
+    } finally {
+      setOvulationLoading(false);
     }
   };
 
@@ -573,7 +622,7 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
         name: 'Due Date Calculator',
         description: 'Calculate your estimated due date',
         icon: Calendar,
-        image: '/images/tools/due-date-calculator.jpg',
+        image: '/images/icons/logo.svg',
         available: true,
         popular: true
       },
@@ -582,25 +631,25 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
         name: 'Weight Recommendation',
         description: 'Get personalized weight gain recommendations',
         icon: Scale,
-        image: '/images/tools/weight-calculator.jpg',
+        image: '/images/icons/logo.svg',
         available: true,
         popular: true
       },
-      {
-        id: 'baby-registry',
-        name: 'Baby Registry',
-        description: 'Create your baby wish list',
-        icon: Gift,
-        image: '/images/tools/baby-registry.jpg',
-        available: pregnancyWeek >= 20,
-        popular: false
-      },
+      // {
+      //   id: 'baby-registry',
+      //   name: 'Baby Registry',
+      //   description: 'Create your baby wish list',
+      //   icon: Gift,
+      //   image: '/images/icons/logo.svg',
+      //   available: pregnancyWeek >= 20,
+      //   popular: false
+      // },
       {
         id: 'baby-products',
         name: 'Baby Products Guide',
         description: 'Trimester-safe products',
         icon: ShoppingBag,
-        image: '/images/tools/baby-products.jpg',
+        image: '/images/icons/logo.svg',
         available: true,
         popular: false
       },
@@ -609,7 +658,7 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
         name: 'Ovulation Calculator',
         description: 'Track your fertile days',
         icon: Calculator,
-        image: '/images/tools/ovulation-calculator.jpg',
+        image: '/images/icons/logo.svg',
         available: pregnancyWeek <= 4,
         popular: false
       },
@@ -881,8 +930,13 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                     } else {
                       setProductsError('Please log in to use the Baby Products Guide.')
                     }
-                  }
-                }}
+                  }else if (tool.id === 'ovulation-calculator') {
+                    if (authToken) {
+                      setShowOvulationModal(true);
+                    } else {
+                      setOvulationError('Please log in to use the Ovulation Calculator.');
+                    }
+                }}}
               >
                 {tool.popular && (
                   <div className="absolute -top-2 -right-2 bg-[#F59297] text-white text-xs px-3 py-1 rounded-full font-bold">
@@ -911,12 +965,12 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
               </div>
             ))}
           </div>
-          {(dueDateError || weightError || productsError) && (
+          {(dueDateError || weightError || productsError|| ovulationError) && (
             <div className="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-4">
               <div className="flex items-start space-x-3">
                 <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
                 <div>
-                  <p className="text-yellow-800 dark:text-yellow-200">{dueDateError || weightError || productsError}</p>
+                  <p className="text-yellow-800 dark:text-yellow-200">{dueDateError || weightError || productsError|| ovulationError}</p>
                   <button
                     onClick={() => router.push('/login')}
                     className="mt-2 text-[#F59297] hover:text-[#e67d82] font-semibold underline"
@@ -930,6 +984,7 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
         </section>
 
         {/* Educational Articles & Videos */}
+
         <section className="mb-16">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
@@ -940,9 +995,38 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article, index) => (
-              <div
-                key={index}
+            {/* Curated Reads */}
+            {[
+              {
+                title: `Nutrition Tips for Your ${getTrimesterName()} Trimester`,
+                type: 'Article',
+                readTime: '8 min',
+                tags: ['Nutrition', 'Health'],
+                thumbnail: '/images/resources/nutrition-guide.jpg',
+                url: 'https://www.healthline.com/health/pregnancy' 
+              },
+              {
+                title: `Your Baby’s Development: Week ${pregnancyWeek}`,
+                type: 'Article',
+                readTime: '6 min',
+                tags: ['Growth', 'Development'],
+                thumbnail: '/images/resources/baby-development.jpg',
+                url: 'https://www.mayoclinic.org/healthy-pregnancy-diet'
+              },
+              {
+                title: `Managing ${getTrimesterName()} Trimester Symptoms`,
+                type: 'Article',
+                readTime: '7 min',
+                tags: ['Symptoms', 'Wellness'],
+                thumbnail: '/images/resources/pregnancy-symptoms.jpg',
+                url: 'https://www.nhs.uk/pregnancy/keeping-well/exercise/'
+              }
+            ].map((article, index) => (
+              <a
+                key={`article-${index}`}
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
               >
                 <div className="relative h-48 overflow-hidden">
@@ -951,24 +1035,18 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                     alt={article.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                      const parent = e.currentTarget.parentElement
+                      e.currentTarget.style.display = 'none';
+                      const parent = e.currentTarget.parentElement;
                       if (parent) {
-                        parent.innerHTML = `<div className="w-full h-full bg-gradient-to-br from-[#F59297] to-[#7da8e6] flex items-center justify-center text-white text-4xl">${article.type === 'Video' ? '▶️' : '📖'}</div>`
+                        parent.innerHTML = `<div className="w-full h-full bg-gradient-to-br from-[#F59297] to-[#7da8e6] flex items-center justify-center text-white text-4xl">📖</div>`;
                       }
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    {article.type === 'Video' ? (
-                      <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
-                        <Play className="w-8 h-8 text-[#F59297] ml-1" />
-                      </div>
-                    ) : (
-                      <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
-                        <BookOpen className="w-8 h-8 text-[#F59297]" />
-                      </div>
-                    )}
+                    <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
+                      <BookOpen className="w-8 h-8 text-[#F59297]" />
+                    </div>
                   </div>
                   <div className="absolute top-4 left-4">
                     <span className="bg-[#F59297] text-white text-xs px-3 py-1 rounded-full font-semibold">
@@ -996,17 +1074,174 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                       </span>
                     ))}
                   </div>
-                  <button className="text-[#F59297] font-semibold hover:underline flex items-center">
-                    {article.type === 'Video' ? 'Watch Now' : 'Read More'}
+                  <span className="text-[#F59297] font-semibold hover:underline flex items-center">
+                    Read More
                     <ChevronRight className="w-4 h-4 ml-1" />
-                  </button>
+                  </span>
                 </div>
-              </div>
+              </a>
+            ))}
+            {/* Recipe Videos */}
+            {[
+              {
+                title: 'Sweet Adjeley’s Jollof Rice Recipe',
+                type: 'Video',
+                readTime: '10 min',
+                tags: ['Recipe', 'Nutrition'],
+                thumbnail: 'https://img.youtube.com/vi/gyfHLPfI2NM/maxresdefault.jpg',
+                url: 'https://www.youtube.com/watch?v=gyfHLPfI2NM'
+              },
+              {
+                title: 'Sweet Adjeley’s Vegetable Soup Recipe',
+                type: 'Video',
+                readTime: '12 min',
+                tags: ['Recipe', 'Nutrition'],
+                thumbnail: 'https://img.youtube.com/vi/poHz_4CXI7E/maxresdefault.jpg',
+                url: 'https://www.youtube.com/watch?v=poHz_4CXI7E'
+              }
+            ].map((video, index) => (
+              <a
+                key={`recipe-video-${index}`}
+                href={video.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div className="w-full h-full bg-gradient-to-br from-[#F59297] to-[#7da8e6] flex items-center justify-center text-white text-4xl">▶️</div>`;
+                      }
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
+                      <Play className="w-8 h-8 text-[#F59297] ml-1" />
+                    </div>
+                  </div>
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-[#F59297] text-white text-xs px-3 py-1 rounded-full font-semibold">
+                      {video.type}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-[#F59297] transition-colors">
+                    {video.title}
+                  </h3>
+                  <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span>{video.readTime}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {video.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="bg-[#F59297]/10 text-[#F59297] px-2 py-1 rounded-full text-xs font-medium"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-[#F59297] font-semibold hover:underline flex items-center">
+                    Watch Now
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </a>
+            ))}
+            {/* Exercise Videos */}
+            {[
+              {
+                title: 'Pregnancy-Safe Workout for Black Women',
+                type: 'Video',
+                readTime: '15 min',
+                tags: ['Exercise', 'Fitness'],
+                thumbnail: 'https://img.youtube.com/vi/1mVHczU_qSA/maxresdefault.jpg',
+                url: 'https://www.youtube.com/watch?v=1mVHczU_qSA'
+              },
+              {
+                title: 'Safe Prenatal Exercise Routine',
+                type: 'Video',
+                readTime: '20 min',
+                tags: ['Exercise', 'Fitness'],
+                thumbnail: 'https://img.youtube.com/vi/SVMRCH5CpGA/maxresdefault.jpg',
+                url: 'https://www.youtube.com/watch?v=SVMRCH5CpGA'
+              }
+            ].map((video, index) => (
+              <a
+                key={`exercise-video-${index}`}
+                href={video.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div className="w-full h-full bg-gradient-to-br from-[#F59297] to-[#7da8e6] flex items-center justify-center text-white text-4xl">▶️</div>`;
+                      }
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
+                      <Play className="w-8 h-8 text-[#F59297] ml-1" />
+                    </div>
+                  </div>
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-[#F59297] text-white text-xs px-3 py-1 rounded-full font-semibold">
+                      {video.type}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-[#F59297] transition-colors">
+                    {video.title}
+                  </h3>
+                  <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    <div className="flex items-center">
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span>{video.readTime}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {video.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="bg-[#F59297]/10 text-[#F59297] px-2 py-1 rounded-full text-xs font-medium"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-[#F59297] font-semibold hover:underline flex items-center">
+                    Watch Now
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </span>
+                </div>
+              </a>
             ))}
           </div>
         </section>
 
         {/* Popular Questions */}
+
         <section className="mb-16">
           <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-lg">
             <div className="text-center mb-8">
@@ -1017,33 +1252,61 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                 Quick answers to common {trimester} trimester questions
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              {questions.map((question, index) => (
-                <div
-                  key={index}
-                  className="p-6 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-[#F59297] hover:bg-[#F59297]/5 transition-all duration-200 cursor-pointer group"
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className="w-8 h-8 bg-[#F59297]/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <HelpCircle className="w-5 h-5 text-[#F59297]" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {questions.map((question, index) => {
+                const isExpanded = expandedEntries.includes(index);
+                // Define trimester-specific answers
+                const answers = {
+                  first: {
+                    "Is it safe to exercise in early pregnancy?": "Yes, low-impact exercises like walking or prenatal yoga are generally safe. Consult your doctor before starting, especially if you have complications.",
+                    "What supplements should I take?": "Folic acid (400-800 mcg daily) is essential to prevent neural tube defects. Your doctor may recommend a prenatal vitamin with iron and DHA.",
+                    "How to deal with morning sickness?": "Eat small, frequent meals, avoid spicy foods, and try ginger tea or acupressure bands. Consult your doctor if severe.",
+                    "When should I tell people I'm pregnant?": "Most wait until after the first trimester (week 12) when miscarriage risk decreases, but it’s a personal choice."
+                  },
+                  second: {
+                    "Is it safe to travel in the second trimester?": "Yes, the second trimester is generally the safest time to travel. Stay hydrated, move regularly, and check with your doctor for long trips.",
+                    "When will I feel baby movements?": "Most women feel the first movements (quickening) between 16-25 weeks, often earlier for second-time moms.",
+                    "Can I eat pineapple during pregnancy?": "Yes, in moderation. Pineapple contains bromelain, but the amount in a typical serving is safe.",
+                    "What is the anatomy scan?": "A detailed ultrasound around 18-20 weeks to check your baby’s development, organs, and detect any abnormalities."
+                  },
+                  third: {
+                    "What are the signs of labor?": "Look for regular contractions, water breaking, lower back pain, or a bloody show. Contact your doctor if these occur.",
+                    "When should I pack my hospital bag?": "Pack by 34-36 weeks. Include essentials like clothes, toiletries, and baby items like diapers and onesies.",
+                    "Is it normal to feel anxious about birth?": "Yes, it’s common. Discuss fears with your doctor, consider childbirth classes, or talk to a counselor for support.",
+                    "How do I know if baby is ready?": "By 37 weeks, babies are typically full-term. Regular checkups and monitoring fetal movements ensure readiness."
+                  }
+                };
+                const answer = answers[trimester][question] || "Consult your healthcare provider for personalized advice.";
+                
+                return (
+                  <div
+                    key={index}
+                    className="p-6 border-2 border-gray-200 dark:border-gray-700 rounded-2xl hover:border-[#F59297] hover:bg-[#F59297]/5 transition-all duration-200 cursor-pointer group"
+                    onClick={() => toggleEntry(index)}
+                  >
+                    <div className="flex items-start justify-between space-x-4">
+                      <div className="flex items-start space-x-4 flex-1">
+                        <div className="w-8 h-8 bg-[#F59297]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                          <HelpCircle className="w-5 h-5 text-[#F59297]" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-[#F59297] transition-colors">
+                            {question}
+                          </h3>
+                          {isExpanded && (
+                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{answer}</p>
+                          )}
+                        </div>
+                      </div>
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5 text-gray-400 group-hover:text-[#F59297] transition-colors" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-gray-400 group-hover:text-[#F59297] transition-colors" />
+                      )}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-[#F59297] transition-colors">
-                        {question}
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Tap to read the full answer
-                      </p>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#F59297] transition-colors" />
                   </div>
-                </div>
-              ))}
-            </div>
-            <div className="text-center">
-              <button className="bg-gradient-to-r from-[#F59297] to-[#7da8e6] text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-200">
-                See All FAQs
-              </button>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -1367,7 +1630,7 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
           </div>
         </section>
 
-        {/* Local Resources & Services */}
+        {/* Local Resources & Services
         <section className="mb-16">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
@@ -1442,9 +1705,9 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
               </button>
             </div>
           </div>
-        </section>
+        </section> */}
 
-        {/* Pregnancy Journal & Memory Book */}
+        {/* Pregnancy Journal & Memory Book
         <section className="mb-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-gradient-to-br from-[#F59297] to-[#7da8e6] rounded-3xl p-8 text-white">
@@ -1520,7 +1783,7 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
               </button>
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
 
       {/* Emergency Floating Button */}
@@ -1628,12 +1891,12 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                     <p className="text-gray-600 dark:text-gray-300">
                       <strong>Due Date:</strong> {dueDateResult.due_date}
                     </p>
-                    <p className="text-gray-600 dark:text-gray-300">
+                    {/* <p className="text-gray-600 dark:text-gray-300">
                       <strong>Gestational Age:</strong> {dueDateResult.gestational_age}
                     </p>
                     <p className="text-gray-600 dark:text-gray-300">
-                      <strong>Trimester:</strong> {dueDateResult.trimester}
-                    </p>
+                      <strong>Trimester:</strong> {dueDateResult.trimester} */}
+                    {/* </p> */}
                   </div>
                 )}
                 <button
@@ -1694,12 +1957,12 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                   <p className="text-gray-600 dark:text-gray-300">
                     <strong>Due Date:</strong> {dueDateResult.due_date}
                   </p>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  {/* <p className="text-gray-600 dark:text-gray-300">
                     <strong>Gestational Age:</strong> {dueDateResult.gestational_age}
                   </p>
                   <p className="text-gray-600 dark:text-gray-300">
                     <strong>Trimester:</strong> {dueDateResult.trimester}
-                  </p>
+                  </p> */}
                 </div>
               )}
               <button
@@ -1730,6 +1993,102 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                 className="w-full bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white py-3 rounded-2xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               >
                 Back
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    {/* Ovulation Calculator Modal */}
+    {showOvulationModal && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Ovulation Calculator</h3>
+            <button
+              onClick={() => {
+                setShowOvulationModal(false);
+                setOvulationLastPeriod('');
+                setOvulationCycleLength('5');
+                setOvulationResult(null);
+                setOvulationError(null);
+              }}
+              className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          {!authToken ? (
+            <div className="text-center">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Please log in to use the Ovulation Calculator.
+              </p>
+              <button
+                onClick={() => router.push('/login')}
+                className="bg-[#F59297] hover:bg-[#e67d82] text-white py-3 px-6 rounded-2xl font-semibold transition-colors"
+              >
+                Log In
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-900 dark:text-white font-medium mb-2">
+                  Last Menstrual Period Date
+                </label>
+                <input
+                  type="date"
+                  value={ovulationLastPeriod}
+                  onChange={(e) => setOvulationLastPeriod(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F59297] focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-900 dark:text-white font-medium mb-2">
+                  Cycle Length (days)
+                </label>
+                <input
+                  type="number"
+                  value={ovulationCycleLength}
+                  onChange={(e) => setOvulationCycleLength(e.target.value)}
+                  min="1"
+                  className="w-full p-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F59297] focus:border-transparent"
+                />
+              </div>
+              {ovulationError && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4">
+                  <div className="flex items-start space-x-3">
+                    <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5" />
+                    <p className="text-red-800 dark:text-red-200">{ovulationError}</p>
+                  </div>
+                </div>
+              )}
+              {ovulationResult && (
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Ovulation Date</h4>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    <strong>Estimated Ovulation Date:</strong> {ovulationResult.ovulation_date}
+                  </p>
+                </div>
+              )}
+              <button
+                onClick={handleOvulationCalculation}
+                disabled={ovulationLoading || !ovulationLastPeriod || !ovulationCycleLength}
+                className={`w-full flex items-center justify-center py-3 rounded-2xl font-semibold transition-colors ${
+                  ovulationLoading || !ovulationLastPeriod || !ovulationCycleLength
+                    ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed'
+                    : 'bg-[#F59297] hover:bg-[#e67d82] text-white'
+                }`}
+              >
+                {ovulationLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Calculating...
+                  </>
+                ) : (
+                  'Calculate'
+                )}
               </button>
             </div>
           )}
@@ -1819,10 +2178,10 @@ const PregnantResourcesPage = ({ pregnancyWeek, trimester, motherName }: Pregnan
                 <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-4">
                   <h4 className="font-semibold text-gray-900 dark:text-white">Weight Recommendation</h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    <strong>Recommended Weight Gain:</strong> {weightResult.recommended_weight_gain} kg
+                    <strong>Recommended Weight Gain:</strong> {weightResult.recommended_weight_gain_kg} kg
                   </p>
                   <p className="text-gray-600 dark:text-gray-300">
-                    <strong>Healthy Range:</strong> {weightResult.healthy_range_min} - {weightResult.healthy_range_max} kg
+                    <strong>BMI:</strong> {weightResult.bmi} - {weightResult.healthy_range_max} kg
                   </p>
                 </div>
               )}

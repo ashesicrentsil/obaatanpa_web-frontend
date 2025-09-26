@@ -101,14 +101,14 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-primary-500 dark:text-primary-400 flex-shrink-0" />
-                <a href="mailto:support@obaatanpa.com" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
-                  support@obaatanpa.com
+                <a href="mailto:obaatanpa.maternity@gmail.com" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
+                  obaatanpa.maternity@gmail.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-primary-500 dark:text-primary-400 flex-shrink-0" />
                 <a href="tel:+233123456789" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors duration-200">
-                  +233 123 456 789
+                  +233 552 025 654
                 </a>
               </div>
               <div className="flex items-center space-x-3">

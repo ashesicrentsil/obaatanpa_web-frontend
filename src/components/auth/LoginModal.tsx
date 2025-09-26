@@ -286,13 +286,13 @@ const LoginModal = ({ isOpen, onClose, onOpenSignUp }: LoginModalProps) => {
       id: 'hospital' as UserType,
       label: 'Hospital/Clinic',
       icon: '🏥',
-      heroImage: '/images/auth/hospital-hero.jpg'
+      heroImage: '/images/auth/hospital.png'
     },
     {
       id: 'practitioner' as UserType,
       label: 'Health Practitioner',
       icon: '👩‍⚕️',
-      heroImage: '/images/auth/health-practitioner-hero.jpg'
+      heroImage: '/images/auth/health-practitioner.jpg'
     }
   ]
 
@@ -596,8 +596,8 @@ const LoginModal = ({ isOpen, onClose, onOpenSignUp }: LoginModalProps) => {
                         </p>
                         <p className="text-xs text-gray-600 dark:text-gray-400">
                           Contact us if you need help:{' '}
-                          <a href="mailto:support@obaatanpa.com" className="text-[#F59297] hover:text-[#e67d82]">
-                            📧 support@obaatanpa.com
+                          <a href="mailto:obaatanpa.maternity@gmail.com" className="text-[#F59297] hover:text-[#e67d82]">
+                            📧 obaatanpa.maternity@gmail.com
                           </a>
                         </p>
                       </div>
